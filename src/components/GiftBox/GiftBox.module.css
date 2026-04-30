@@ -1,0 +1,364 @@
+.giftBoxContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.giftBox {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border: 3px solid #ff1493;
+  border-radius: 12px;
+  padding: 0;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 25px rgba(255, 20, 147, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.giftBox.filled {
+  box-shadow: 0 12px 35px rgba(255, 20, 147, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
+}
+
+.boxTop {
+  background: linear-gradient(180deg, #ff1493 0%, #ff69b4 100%);
+  padding: 1rem;
+  text-align: center;
+  position: relative;
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.5);
+}
+
+.boxLid {
+  font-size: 3rem;
+  display: inline-block;
+  animation: lidRotate 0.6s ease-in-out;
+}
+
+@keyframes lidRotate {
+  0%, 100% { transform: rotateX(0deg) rotateZ(0deg); }
+  50% { transform: rotateX(30deg) rotateZ(5deg); }
+}
+
+.boxContent {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 250, 205, 0.9) 100%);
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1rem;
+  color: #999;
+  text-align: center;
+  padding: 2rem;
+}
+
+.placeholderIcon {
+  font-size: 3.5rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.placeholder p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #666;
+  margin: 0;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #999;
+  font-style: italic;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.giftItem {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  background: white;
+  border-radius: 8px;
+  padding: 0.8rem;
+  border: 2px solid rgba(255, 20, 147, 0.2);
+  animation: slideIn 0.3s ease;
+  transition: all 0.2s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.giftItem.addedAnimation {
+  animation: addedPulse 0.5s ease;
+}
+
+@keyframes addedPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); background-color: #fff9e6; }
+  100% { transform: scale(1); }
+}
+
+.giftItem:hover {
+  box-shadow: 0 4px 12px rgba(255, 20, 147, 0.2);
+  transform: translateY(-2px);
+}
+
+.itemImage {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemInfo h4 {
+  margin: 0 0 0.3rem 0;
+  font-size: 0.9rem;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.price {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.originalPrice {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.discountedPrice {
+  color: #ff1493;
+  font-weight: 700;
+}
+
+.removeBtn {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff1493 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.removeBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 20, 147, 0.4);
+}
+
+.summary {
+  background: white;
+  border: 2px solid #ff1493;
+  border-radius: 8px;
+  padding: 1rem;
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  padding: 0.3rem 0;
+}
+
+.summaryRow span:first-child {
+  color: #666;
+}
+
+.summaryRow span:last-child {
+  font-weight: 600;
+  color: #333;
+}
+
+.discount {
+  color: #ff1493 !important;
+}
+
+.summaryRow.total {
+  font-size: 1.2rem !important;
+  border-top: 2px solid #eee;
+  padding-top: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.summaryRow.total span:last-child {
+  color: #ff1493 !important;
+}
+
+.promosSection {
+  background: linear-gradient(135deg, #fff5f7 0%, #fff0f5 100%);
+  border: 2px dashed #ff1493;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.promosSection h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: #ff1493;
+  text-align: center;
+}
+
+.promosList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+.promoCard {
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.promoCard:hover {
+  border-color: #ffb6c1;
+  box-shadow: 0 4px 12px rgba(255, 20, 147, 0.15);
+}
+
+.promoCard.promoActive {
+  background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+  color: white;
+  border-color: #ff1493;
+  box-shadow: 0 6px 20px rgba(255, 20, 147, 0.3);
+}
+
+.promoName {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+
+.promoMessage {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-bottom: 0.4rem;
+}
+
+.promoDiscount {
+  background: rgba(255, 20, 147, 0.2);
+  color: #ff1493;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.promoCard.promoActive .promoDiscount {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.clearBtn,
+.addToCartBtn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.9rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clearBtn {
+  background: #f5f5f5;
+  color: #666;
+  border: 2px solid #ddd;
+}
+
+.clearBtn:hover {
+  background: #ff6b6b;
+  color: white;
+  border-color: #ff6b6b;
+}
+
+.addToCartBtn {
+  background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
+}
+
+.addToCartBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 20, 147, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .giftBoxContainer {
+    max-width: 100%;
+  }
+
+  .boxLid {
+    font-size: 2.5rem;
+  }
+
+  .placeholderIcon {
+    font-size: 3rem;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}
