@@ -33,6 +33,20 @@ async function initDb() {
     )
   `);
 
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      customerName TEXT NOT NULL,
+      customerEmail TEXT NOT NULL,
+      paymentMethod TEXT NOT NULL,
+      status TEXT NOT NULL,
+      shipping REAL NOT NULL,
+      total REAL NOT NULL,
+      items TEXT NOT NULL,
+      createdAt TEXT NOT NULL
+    )
+  `);
+
   const row = await db.get('SELECT COUNT(*) AS count FROM products');
 
   if (!row || row.count === 0) {
@@ -78,6 +92,17 @@ function normalizeProduct(row) {
     likes: Number(row.likes),
     stockQuantity: Number(row.stockQuantity),
     discount: Number(row.discount),
+  };
+}
+
+function normalizeOrder(row) {
+  if (!row) return null;
+  return {
+    ...row,
+    shipping: Number(row.shipping),
+    total: Number(row.total),
+    items: row.items ? JSON.parse(row.items) : [],
+    createdAt: row.createdAt,
   };
 }
 
@@ -188,6 +213,65 @@ async function startServer() {
       return res.status(404).json({ message: 'Producto no encontrado' });
     }
     res.status(204).send();
+  });
+
+  app.post('/api/orders', async (req, res) => {
+    const { customerName, customerEmail, paymentMethod, shipping, total, items } = req.body;
+    if (!customerName || !customerEmail || !paymentMethod || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'Faltan datos del pedido' });
+    }
+
+    const transaction = await db.exec('BEGIN TRANSACTION');
+    try {
+      for (const item of items) {
+        const product = await db.get('SELECT * FROM products WHERE id = ?', item.id);
+        if (!product) {
+          throw new Error(`Producto no encontrado: ${item.id}`);
+        }
+        const productStock = Number(product.stockQuantity);
+        const quantity = Number(item.quantity) || 0;
+        if (quantity > productStock) {
+          throw new Error(`No hay stock suficiente para ${product.name}`);
+        }
+        const newStock = productStock - quantity;
+        await db.run('UPDATE products SET stockQuantity = ?, inStock = ? WHERE id = ?', newStock, newStock > 0 ? 1 : 0, item.id);
+      }
+
+      const result = await db.run(`
+        INSERT INTO orders (
+          customerName, customerEmail, paymentMethod, status, shipping, total, items, createdAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+        String(customerName).trim(),
+        String(customerEmail).trim(),
+        String(paymentMethod).trim(),
+        'ficticio',
+        Number(shipping) || 0,
+        Number(total) || 0,
+        JSON.stringify(items),
+        new Date().toISOString()
+      );
+
+      const created = await db.get('SELECT * FROM orders WHERE id = ?', result.lastID);
+      await db.exec('COMMIT');
+      res.status(201).json(normalizeOrder(created));
+    } catch (error) {
+      await db.exec('ROLLBACK');
+      res.status(400).json({ message: error.message || 'Error al crear el pedido' });
+    }
+  });
+
+  app.get('/api/orders', async (req, res) => {
+    const rows = await db.all('SELECT * FROM orders ORDER BY id DESC');
+    res.json(rows.map(normalizeOrder));
+  });
+
+  app.get('/api/orders/:id', async (req, res) => {
+    const row = await db.get('SELECT * FROM orders WHERE id = ?', req.params.id);
+    if (!row) {
+      return res.status(404).json({ message: 'Pedido no encontrado' });
+    }
+    res.json(normalizeOrder(row));
   });
 
   const port = process.env.PORT || 4000;
