@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { products } from '../../data/products';
 import { useGiftList } from '../../hooks/useGiftList';
 import { useCartContext } from '../../App';
+import { useAdmin } from '../../contexts/AdminContext';
 import GiftBox from '../../components/GiftBox/GiftBox';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import styles from './GiftList.module.css';
@@ -23,6 +23,7 @@ function GiftListPage() {
   } = useGiftList();
 
   const { addToCart } = useCartContext();
+  const { products } = useAdmin();
   const [newListName, setNewListName] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');

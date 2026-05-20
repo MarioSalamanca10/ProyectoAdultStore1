@@ -1,114 +1,82 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { products as initialProducts } from '../data/products';
+import { createProduct, deleteProduct as deleteProductApi, getProducts, updateProduct as updateProductApi } from '../api/products';
 
 export const AdminContext = createContext(null);
 
 export function AdminProvider({ children }) {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Cargar productos desde localStorage o usar los iniciales
-  useEffect(() => {
-    const savedProducts = localStorage.getItem('adminProducts');
-    if (savedProducts) {
-      setProducts(JSON.parse(savedProducts));
-    } else {
-      setProducts(initialProducts.map(product => ({
-        ...product,
-        likes: 0,
-        reviews: 0,
-        rating: 0,
-        stockQuantity: product.stockQuantity ?? 1,
-        inStock: product.stockQuantity !== undefined ? product.stockQuantity > 0 : true,
-      })));
+  const loadProducts = async () => {
+    try {
+      const fetchedProducts = await getProducts();
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error('Error al cargar productos:', error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const handleStorageChange = (event) => {
-      if (event.key !== 'adminProducts') return;
-      if (!event.newValue) return;
-
-      try {
-        const updatedProducts = JSON.parse(event.newValue);
-        if (Array.isArray(updatedProducts)) {
-          setProducts(updatedProducts);
-        }
-      } catch (error) {
-        console.error('Error parsing products from storage event', error);
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+  useEffect(() => {
+    loadProducts();
   }, []);
 
-  // Guardar productos en localStorage cada vez que cambien
-  useEffect(() => {
-    if (products.length > 0) {
-      localStorage.setItem('adminProducts', JSON.stringify(products));
-    }
-  }, [products]);
-
-  const addProduct = (newProduct) => {
-    const stockQuantity = parseInt(newProduct.stockQuantity, 10) || 0;
-    const inStock = newProduct.inStock !== undefined ? newProduct.inStock : stockQuantity > 0;
-
-    const product = {
-      id: Math.max(...products.map(p => p.id), 0) + 1,
+  const addProduct = async (newProduct) => {
+    const productPayload = {
       ...newProduct,
-      price: parseFloat(newProduct.price),
-      stockQuantity,
-      inStock,
+      price: parseFloat(newProduct.price) || 0,
+      stockQuantity: parseInt(newProduct.stockQuantity, 10) || 0,
+      inStock: newProduct.inStock !== undefined ? newProduct.inStock : (parseInt(newProduct.stockQuantity, 10) || 0) > 0,
       likes: 0,
       reviews: 0,
       rating: 0,
     };
-    setProducts([...products, product]);
-    return product;
+
+    const created = await createProduct(productPayload);
+    setProducts((current) => [...current, created]);
+    return created;
   };
 
-  const updateProduct = (id, updatedData) => {
-    const stockQuantity = updatedData.stockQuantity !== undefined
-      ? parseInt(updatedData.stockQuantity, 10)
-      : undefined;
-    const inStock = updatedData.inStock !== undefined
-      ? updatedData.inStock
-      : stockQuantity !== undefined
-        ? stockQuantity > 0
-        : undefined;
+  const updateProduct = async (id, updatedData) => {
+    const payload = {
+      ...updatedData,
+      price: updatedData.price !== undefined ? parseFloat(updatedData.price) : undefined,
+      stockQuantity: updatedData.stockQuantity !== undefined ? parseInt(updatedData.stockQuantity, 10) : undefined,
+      inStock: updatedData.inStock,
+    };
 
-    setProducts(products.map(p => {
-      if (p.id !== id) return p;
-      const updatedProduct = { ...p, ...updatedData };
-      if (stockQuantity !== undefined) {
-        updatedProduct.stockQuantity = stockQuantity;
-        updatedProduct.inStock = inStock !== undefined ? inStock : stockQuantity > 0;
-      }
-      if (updatedData.inStock === false) {
-        updatedProduct.stockQuantity = 0;
-      }
-      if (updatedData.inStock === true && updatedProduct.stockQuantity === 0) {
-        updatedProduct.stockQuantity = 1;
-      }
-      return updatedProduct;
-    }));
+    const updatedProduct = await updateProductApi(id, payload);
+    setProducts((current) => current.map((product) =>
+      product.id === id ? updatedProduct : product
+    ));
   };
 
-  const deleteProduct = (id) => {
-    setProducts(products.filter(p => p.id !== id));
+  const deleteProduct = async (id) => {
+    await deleteProductApi(id);
+    setProducts((current) => current.filter((product) => product.id !== id));
   };
 
-  const addLike = (id) => {
-    setProducts(products.map(p => 
-      p.id === id ? { ...p, likes: (p.likes || 0) + 1 } : p
+  const addLike = async (id) => {
+    const product = products.find((p) => p.id === id);
+    if (!product) return;
+
+    const updatedProduct = await updateProductApi(id, {
+      likes: (product.likes || 0) + 1,
+    });
+    setProducts((current) => current.map((p) =>
+      p.id === id ? updatedProduct : p
     ));
   };
 
   return (
-    <AdminContext.Provider value={{ 
-      products, 
-      addProduct, 
-      updateProduct, 
-      deleteProduct, 
-      addLike 
+    <AdminContext.Provider value={{
+      products,
+      loading,
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      addLike,
     }}>
       {children}
     </AdminContext.Provider>

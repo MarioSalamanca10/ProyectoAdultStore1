@@ -15,6 +15,7 @@ function ProductForm({ product = null, onClose = null }) {
   });
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState('');
+  const [submitError, setSubmitError] = useState('');
 
   const categories = ['Juguetes', 'Lencería', 'Cosméticos', 'Accesorios', 'Parejas'];
 
@@ -88,8 +89,9 @@ function ProductForm({ product = null, onClose = null }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError('');
 
     if (!validateForm()) {
       return;
@@ -103,26 +105,31 @@ function ProductForm({ product = null, onClose = null }) {
       inStock: formData.inStock && stockQuantity > 0,
     };
 
-    if (product) {
-      updateProduct(product.id, productData);
-    } else {
-      addProduct(productData);
-    }
+    try {
+      if (product) {
+        await updateProduct(product.id, productData);
+      } else {
+        await addProduct(productData);
+      }
 
-    // Resetear formulario
-    setFormData({
-      name: '',
-      description: '',
-      price: '',
-      category: 'Juguetes',
-      image: '',
-      inStock: true,
-      stockQuantity: 1,
-    });
-    setImagePreview('');
+      // Resetear formulario solo si la operación fue exitosa
+      setFormData({
+        name: '',
+        description: '',
+        price: '',
+        category: 'Juguetes',
+        image: '',
+        inStock: true,
+        stockQuantity: 1,
+      });
+      setImagePreview('');
 
-    if (onClose) {
-      onClose();
+      if (onClose) {
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error guardando producto:', error);
+      setSubmitError(error.message || 'Error al guardar el producto.');
     }
   };
 
@@ -250,6 +257,10 @@ function ProductForm({ product = null, onClose = null }) {
           </div>
         )}
       </div>
+
+      {submitError && (
+        <div className={styles.submitError}>{submitError}</div>
+      )}
 
       <div className={styles.actions}>
         <button type="submit" className={styles.submitBtn}>

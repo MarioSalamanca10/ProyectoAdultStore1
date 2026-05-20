@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useGiftList } from '../../hooks/useGiftList';
 import { useCartContext } from '../../App';
-import { products } from '../../data/products';
 import styles from './FloatingGiftBubble.module.css';
 
 function FloatingGiftBubble() {

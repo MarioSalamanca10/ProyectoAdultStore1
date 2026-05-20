@@ -101,11 +101,13 @@
   font-weight: 500;
 }
 
-.imagePreview {
-  margin-top: 12px;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 2px solid #e0e0e0;
+.submitError {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: rgba(245, 101, 101, 0.12);
+  color: #c53030;
+  border: 1px solid rgba(245, 101, 101, 0.25);
+  font-weight: 600;
 }
 
 .imagePreview img {
