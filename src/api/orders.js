@@ -14,7 +14,7 @@ async function handleResponse(responsePromise) {
   return response.json();
 }
 
-export function createOrder(order) {
+export async function createOrder(order) {
   return handleResponse(fetch(`${API_BASE}/api/orders`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -22,10 +22,10 @@ export function createOrder(order) {
   }));
 }
 
-export function getOrders() {
+export async function getOrders() {
   return handleResponse(fetch(`${API_BASE}/api/orders`));
 }
 
-export function getOrder(id) {
+export async function getOrder(id) {
   return handleResponse(fetch(`${API_BASE}/api/orders/${id}`));
 }

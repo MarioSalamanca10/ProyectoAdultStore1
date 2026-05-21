@@ -20,28 +20,32 @@ async function parseResponse(response) {
   }
 }
 
-export function getProducts() {
-  return parseResponse(fetch(buildUrl('/api/products')));
+export async function getProducts() {
+  const response = await fetch(buildUrl('/api/products'));
+  return parseResponse(response);
 }
 
-export function getProduct(id) {
-  return parseResponse(fetch(buildUrl(`/api/products/${id}`)));
+export async function getProduct(id) {
+  const response = await fetch(buildUrl(`/api/products/${id}`));
+  return parseResponse(response);
 }
 
-export function createProduct(product) {
-  return parseResponse(fetch(buildUrl('/api/products'), {
+export async function createProduct(product) {
+  const response = await fetch(buildUrl('/api/products'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(product),
-  }));
+  });
+  return parseResponse(response);
 }
 
-export function updateProduct(id, data) {
-  return parseResponse(fetch(buildUrl(`/api/products/${id}`), {
+export async function updateProduct(id, data) {
+  const response = await fetch(buildUrl(`/api/products/${id}`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
-  }));
+  });
+  return parseResponse(response);
 }
 
 export async function deleteProduct(id) {
