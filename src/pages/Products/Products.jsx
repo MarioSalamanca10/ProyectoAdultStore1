@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAdmin } from '../../contexts/AdminContext';
 import { useFavoritesContext } from '../../App';
-import { categories } from '../../data/products';
 import { calculateRating } from '../../utils/ratingCalculator';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import ProductModal from '../../components/ProductModal/ProductModal';
@@ -31,6 +30,11 @@ function Products() {
   }, [location.search]);
 
   const { products } = useAdmin();
+
+  const categories = useMemo(() => [
+    'Todos',
+    ...Array.from(new Set(products.map((product) => product.category))),
+  ], [products]);
 
   const filtered = useMemo(() => {
     let result = [...products];
