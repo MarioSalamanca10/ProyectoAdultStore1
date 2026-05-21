@@ -16,14 +16,75 @@ Proyecto Desarrollo basado en plataforma — tienda e-commerce adulta construida
 git clone https://github.com/juanseq2/adulto-storer-react.git
 cd adulto-storer-react
 
-# 2. Instala las dependencias
+# 2. Instala las dependencias del frontend
 npm install
 
-# 3. Arranca el servidor de desarrollo
+# 3. Instala las dependencias del backend
+npm run backend:install
+
+# 4. Arranca el backend y el frontend
+npm run backend:start
 npm run dev
 ```
 
 Luego abre tu navegador en **http://localhost:5173** (Vite muestra la URL exacta en la terminal).
+
+### Backend local en Express
+
+El backend está en `backend/` y expone los siguientes endpoints:
+
+- `GET /products` — lista todos los productos
+- `GET /products/:id` — obtiene un producto por ID
+- `POST /products` — crea un producto
+- `PUT /products/:id` — actualiza un producto
+- `DELETE /products/:id` — elimina un producto
+
+### Uso con PostgreSQL
+
+El backend puede usar una base de datos PostgreSQL real cuando se define `DATABASE_URL`.
+
+- Agrega `backend/.env` con la URL de tu base de datos:
+
+```env
+DATABASE_URL=postgres://usuario:contraseña@localhost:5432/adult_store_db
+PORT=4000
+```
+
+- Instala dependencias del backend:
+
+```bash
+npm run backend:install
+```
+
+- Inicializa la base de datos y carga los productos desde `backend/data/products.json`:
+
+```bash
+cd backend
+npm run db:init
+```
+
+- Inicia el backend:
+
+```bash
+npm run backend:start
+```
+
+Si no hay `DATABASE_URL`, el backend seguirá funcionando con el archivo local JSON.
+
+### Despliegue en Render
+
+Para desplegar en Render con PostgreSQL:
+
+1. Crea un servicio Web para el backend.
+2. Agrega un servicio de PostgreSQL en Render.
+3. Copia la variable `DATABASE_URL` del servicio de Postgres a las variables de entorno del servicio Web.
+4. Asegúrate de que el frontend use la URL del backend en Render guardando `VITE_API_BASE_URL` en las variables de entorno del frontend o en `.env`.
+
+Si quieres usar este backend local, agrega o actualiza en `.env.local`:
+
+```env
+VITE_API_BASE_URL=http://localhost:4000
+```
 
 ### Scripts disponibles
 

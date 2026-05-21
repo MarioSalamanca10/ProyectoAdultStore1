@@ -1,26 +1,48 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { products as initialProducts } from '../data/products';
+import { getProducts } from '../services/api';
 
 export const AdminContext = createContext(null);
 
 export function AdminProvider({ children }) {
   const [products, setProducts] = useState([]);
 
-  // Cargar productos desde localStorage o usar los iniciales
+  // Cargar productos desde la API remota cuando exista, o desde localStorage/inicial
   useEffect(() => {
-    const savedProducts = localStorage.getItem('adminProducts');
-    if (savedProducts) {
-      setProducts(JSON.parse(savedProducts));
-    } else {
-      setProducts(initialProducts.map(product => ({
-        ...product,
-        likes: 0,
-        reviews: 0,
-        rating: 0,
-        stockQuantity: product.stockQuantity ?? 1,
-        inStock: product.stockQuantity !== undefined ? product.stockQuantity > 0 : true,
-      })));
+    async function loadProducts() {
+      try {
+        const apiProducts = await getProducts();
+        if (Array.isArray(apiProducts) && apiProducts.length > 0) {
+          setProducts(apiProducts.map(product => ({
+            ...product,
+            likes: product.likes ?? 0,
+            reviews: product.reviews ?? 0,
+            rating: product.rating ?? 0,
+            stockQuantity: product.stockQuantity ?? 1,
+            inStock: product.stockQuantity !== undefined ? product.stockQuantity > 0 : true,
+          })));
+          return;
+        }
+      } catch (error) {
+        console.warn('No se pudo cargar productos remotos:', error.message);
+      }
+
+      const savedProducts = localStorage.getItem('adminProducts');
+      if (savedProducts) {
+        setProducts(JSON.parse(savedProducts));
+      } else {
+        setProducts(initialProducts.map(product => ({
+          ...product,
+          likes: 0,
+          reviews: 0,
+          rating: 0,
+          stockQuantity: product.stockQuantity ?? 1,
+          inStock: product.stockQuantity !== undefined ? product.stockQuantity > 0 : true,
+        })));
+      }
     }
+
+    loadProducts();
 
     const handleStorageChange = (event) => {
       if (event.key !== 'adminProducts') return;

@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS products (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  price NUMERIC NOT NULL,
+  category TEXT NOT NULL,
+  image TEXT,
+  rating NUMERIC DEFAULT 0,
+  reviews INTEGER DEFAULT 0,
+  likes INTEGER DEFAULT 0,
+  inStock BOOLEAN DEFAULT TRUE,
+  stockQuantity INTEGER DEFAULT 0,
+  discount NUMERIC DEFAULT 0
+);
