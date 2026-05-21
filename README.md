@@ -78,7 +78,7 @@ Para desplegar en Render con PostgreSQL:
 1. Crea un servicio Web para el backend.
 2. Agrega un servicio de PostgreSQL en Render.
 3. Copia la variable `DATABASE_URL` del servicio de Postgres a las variables de entorno del servicio Web.
-4. Asegúrate de que el frontend use la URL del backend en Render guardando `VITE_API_URL` en las variables de entorno del frontend o en `.env`.
+4. Asegúrate de que el frontend use la URL del backend en Render guardando `VITE_API_URL` (o `VITE_API_BASE_URL`) en las variables de entorno del frontend o en `.env`.
 
 Si quieres usar este backend local, agrega o actualiza en `.env.local`:
 
