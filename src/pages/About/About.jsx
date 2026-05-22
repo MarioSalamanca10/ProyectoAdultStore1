@@ -1,10 +1,10 @@
 import styles from './About.module.css';
 
 const TEAM = [
-  { name: 'Ana García', role: 'Fundadora & CEO', emoji: '👩‍💼', bio: 'Especialista en salud sexual con 10 años de experiencia.' },
-  { name: 'Carlos López', role: 'Director de Producto', emoji: '👨‍💻', bio: 'Apasionado por crear experiencias de compra únicas y cómodas.' },
-  { name: 'María Rodríguez', role: 'Atención al Cliente', emoji: '👩‍❤️‍💋‍👨', bio: 'Dedicada a que cada cliente se sienta seguro y bienvenido.' },
-  { name: 'Diego Martínez', role: 'Logística & Discreción', emoji: '📦', bio: 'Garantiza que cada envío llegue a tiempo y de forma privada.' },
+  { name: 'Luz Buitrago', role: 'Fundadora & CEO', emoji: '👩‍💼', bio: 'Especialista en salud sexual con 10 años de experiencia.' },
+  { name: 'Juan Quintero', role: 'Director de Producto', emoji: '👨‍💻', bio: 'Apasionado por crear experiencias de compra únicas y cómodas.' },
+  { name: 'Mario Salmanca', role: 'Atención al Cliente', emoji: '👩‍❤️‍💋‍👨', bio: 'Dedicado a que cada cliente se sienta seguro y bienvenido.' },
+  { name: 'Luz Buitrago', role: 'Logística & Discreción', emoji: '📦', bio: 'Garantiza que cada envío llegue a tiempo y de forma privada.' },
 ];
 
 const VALUES = [
@@ -120,8 +120,8 @@ function About() {
             <h3>¿Tienes preguntas?</h3>
             <p>Estamos aquí para ayudarte de forma discreta y profesional.</p>
             <div className={styles.infoItems}>
-              <span>📧 contacto@adultostore.com</span>
-              <span>📞 +34 900 123 456</span>
+              <span>📧 jomasago10@gmail.com</span>
+              <span>📞 +57 323 8151791</span>
               <span>🕐 Lun–Vie 9:00–21:00</span>
             </div>
           </div>
