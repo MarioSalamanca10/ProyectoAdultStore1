@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useCartContext } from '../../App';
+import { formatPrice } from '../../utils/formatPrice';
 import styles from './CartItem.module.css';
 
 function CartItem({ item }) {
@@ -19,7 +20,7 @@ function CartItem({ item }) {
         <h4 className={styles.name}>{item.name}</h4>
         <span className={styles.category}>{item.category}</span>
         <div className={styles.price}>
-          ${discountedPrice.toFixed(2)}
+          {formatPrice(discountedPrice)}
           {item.discount > 0 && (
             <span className={styles.discount}>-{item.discount}%</span>
           )}
@@ -46,7 +47,7 @@ function CartItem({ item }) {
           </button>
         </div>
 
-        <div className={styles.subtotal}>${subtotal.toFixed(2)}</div>
+        <div className={styles.subtotal}>{formatPrice(subtotal)}</div>
 
         <button
           className={styles.removeBtn}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAdmin } from '../../contexts/AdminContext';
 import ProductForm from './ProductForm';
+import { formatPrice } from '../../utils/formatPrice';
 import styles from './AdminPanel.module.css';
 
 function AdminPanel() {
@@ -125,7 +126,7 @@ function AdminPanel() {
                         {product.description.substring(0, 80)}...
                       </p>
 
-                      <div className={styles.price}>${product.price.toFixed(2)}</div>
+                      <div className={styles.price}>{formatPrice(product.price)}</div>
 
                       <div className={styles.actions}>
                         <button

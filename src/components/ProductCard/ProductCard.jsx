@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { useCartContext, useFavoritesContext } from '../../App';
 import { useAdmin } from '../../contexts/AdminContext';
 import Rating from '../Rating/Rating';
+import { formatPrice } from '../../utils/formatPrice';
 import styles from './ProductCard.module.css';
 
 function ProductCard({ product, onProductClick, dragData }) {
@@ -75,11 +76,11 @@ function ProductCard({ product, onProductClick, dragData }) {
         <div className={styles.priceRow}>
           {discountedPrice ? (
             <>
-              <span className={styles.price}>${discountedPrice.toFixed(2)}</span>
-              <span className={styles.originalPrice}>${product.price.toFixed(2)}</span>
+              <span className={styles.price}>{formatPrice(discountedPrice)}</span>
+              <span className={styles.originalPrice}>{formatPrice(product.price)}</span>
             </>
           ) : (
-            <span className={styles.price}>${product.price.toFixed(2)}</span>
+            <span className={styles.price}>{formatPrice(product.price)}</span>
           )}
         </div>
 

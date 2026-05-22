@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCartContext } from '../../App';
 import CartItem from '../../components/CartItem/CartItem';
 import { createOrder } from '../../api/orders';
+import { formatPrice } from '../../utils/formatPrice';
 import styles from './Cart.module.css';
 
 const SHIPPING_THRESHOLD = 50;
@@ -74,7 +75,7 @@ function Cart() {
                 <p><strong>Nombre:</strong> {orderData.customerName}</p>
                 <p><strong>Correo:</strong> {orderData.customerEmail}</p>
                 <p><strong>Pago:</strong> {orderData.paymentMethod} (ficticio)</p>
-                <p><strong>Total:</strong> ${orderData.total.toFixed(2)}</p>
+                <p><strong>Total:</strong> {formatPrice(orderData.total)}</p>
               </div>
             )}
             <p>Recibirás un email de confirmación ficticio. Tu pedido llegará de forma discreta.</p>
@@ -143,7 +144,7 @@ function Cart() {
               </div>
               {total < SHIPPING_THRESHOLD && (
                 <p className={styles.freeShippingMsg}>
-                  Añade ${(SHIPPING_THRESHOLD - total).toFixed(2)} más para envío gratis
+                  Añade {formatPrice(SHIPPING_THRESHOLD - total)} más para envío gratis
                 </p>
               )}
             </div>
