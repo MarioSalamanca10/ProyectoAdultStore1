@@ -10,6 +10,8 @@ import Cart from './pages/Cart/Cart';
 import Login from './components/Login/Login';
 import AdminPanel from './components/Admin/AdminPanel';
 import AgeVerification from './components/AgeVerification/AgeVerification';
+import FloatingWhatsApp from './components/FloatingWhatsApp/FloatingWhatsApp';
+import SidebarMenu from './components/SidebarMenu/SidebarMenu';
 import { useCart } from './hooks/useCart';
 import { usePersistentStorage } from './hooks/usePersistentStorage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -82,6 +84,8 @@ function AppContent() {
             </Routes>
           </main>
           <Footer />
+          <FloatingWhatsApp />
+          <SidebarMenu />
         </div>
       </FavoritesContext.Provider>
     </CartContext.Provider>

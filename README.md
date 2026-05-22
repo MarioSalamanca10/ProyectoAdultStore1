@@ -69,22 +69,118 @@ npm run db:init
 npm run backend:start
 ```
 
-Si no hay `DATABASE_URL`, el backend seguirá funcionando con el archivo local JSON.
+## 🗄️ Base de Datos
 
-### Despliegue en Render
+### Estructura y Conexión
 
-Para desplegar en Render con PostgreSQL:
+El proyecto usa **SQLite** por defecto para almacenar productos y pedidos. La base de datos se crea automáticamente en `products.db` cuando se inicia el backend.
 
-1. Crea un servicio Web para el backend.
-2. Agrega un servicio de PostgreSQL en Render.
-3. Copia la variable `DATABASE_URL` del servicio de Postgres a las variables de entorno del servicio Web.
-4. Asegúrate de que el frontend use la URL del backend en Render guardando `VITE_API_URL` (o `VITE_API_BASE_URL`) en las variables de entorno del frontend o en `.env`.
+#### Tablas principales:
 
-Si quieres usar este backend local, agrega o actualiza en `.env.local`:
+**1. Tabla `products`**
+Almacena los productos disponibles en la tienda:
 
-```env
-VITE_API_BASE_URL=http://localhost:4000
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | INTEGER | ID único (clave primaria) |
+| `name` | TEXT | Nombre del producto |
+| `description` | TEXT | Descripción detallada |
+| `price` | REAL | Precio en USD |
+| `category` | TEXT | Categoría (ej: "Accesorios", "Ropa", etc) |
+| `image` | TEXT | URL de la imagen |
+| `rating` | REAL | Calificación (0-5) |
+| `reviews` | INTEGER | Número de comentarios |
+| `likes` | INTEGER | Número de "me gusta" |
+| `inStock` | INTEGER | 1 si está en stock, 0 si no |
+| `stockQuantity` | INTEGER | Cantidad disponible |
+| `discount` | INTEGER | Descuento en porcentaje (0-100) |
+
+**Ejemplo:**
+```sql
+INSERT INTO products 
+(name, description, price, category, image, rating, reviews, likes, inStock, stockQuantity, discount)
+VALUES 
+('Vibrador Rosa', 'Vibrador de silicona suave', 29.99, 'Vibradores', '/assets/products/product-1.jpg', 4.8, 45, 12, 1, 15, 10);
 ```
+
+**2. Tabla `orders`**
+Almacena los pedidos realizados:
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | INTEGER | ID único del pedido |
+| `customerName` | TEXT | Nombre del cliente |
+| `customerEmail` | TEXT | Email del cliente |
+| `paymentMethod` | TEXT | Método de pago (Tarjeta, Paypal, etc) |
+| `status` | TEXT | Estado del pedido (ej: "ficticio", "procesando", "entregado") |
+| `shipping` | REAL | Costo de envío |
+| `total` | REAL | Monto total del pedido |
+| `items` | TEXT | JSON con los productos del pedido |
+| `createdAt` | TEXT | Fecha de creación (ISO 8601) |
+
+**Ejemplo:**
+```sql
+INSERT INTO orders 
+(customerName, customerEmail, paymentMethod, status, shipping, total, items, createdAt)
+VALUES 
+('Juan Pérez', 'juan@example.com', 'Tarjeta', 'ficticio', 5.50, 35.49, '[{"id":1,"name":"Vibrador Rosa","quantity":1,"price":29.99}]', '2026-05-21T10:30:00Z');
+```
+
+### Datos Iniciales
+
+Al iniciar el backend por primera vez, se cargan automáticamente **22 productos** desde `src/data/products.js`:
+
+- Vibradores
+- Accesorios
+- Lubricantes
+- Juguetes eróticos
+- Ropa íntima
+
+Estos datos se insertan en la base de datos SQLite si está vacía.
+
+### Conexión con el Backend
+
+El backend (en `server.js`) se conecta a SQLite usando:
+
+```javascript
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
+
+const db = await open({
+  filename: 'products.db',
+  driver: sqlite3.Database,
+});
+```
+
+**Endpoints de la BD:**
+- `GET /api/products` — obtiene todos los productos
+- `GET /api/products/:id` — obtiene un producto
+- `POST /api/products` — inserta un producto
+- `PUT /api/products/:id` — actualiza un producto
+- `DELETE /api/products/:id` — elimina un producto
+- `GET /api/orders` — obtiene todos los pedidos
+- `POST /api/orders` — crea un pedido (con control de stock)
+
+### Respaldo de Datos
+
+El archivo `products.db` se guarda en la raíz del proyecto. Para hacer backup:
+
+```bash
+cp products.db products.backup.db
+```
+
+Para restaurar:
+
+```bash
+cp products.backup.db products.db
+```
+
+## 💬 Menú Hamburguesa (Mobile)
+
+Se agregó un menú lateral que aparece en dispositivos móviles (<768px) con acceso rápido a:
+
+- **Contactar por WhatsApp** — Abre conversación directa con el número +57 323 8151791
+- **Ver Deseados** — Scroll automático hacia la caja de deseados
 
 ### Scripts disponibles
 
@@ -97,7 +193,22 @@ VITE_API_BASE_URL=http://localhost:4000
 
 > **Nota:** no se necesita configurar variables de entorno — el proyecto usa datos locales sin backend.
 
-## 🔀 Cómo aplicar los cambios del Pull Request a tu repositorio
+## � Widget de WhatsApp
+
+Se ha agregado un widget flotante de WhatsApp en la esquina inferior derecha de la aplicación:
+
+- **Botón flotante:** 💬 con animación de rebote
+- **Menú interactivo:** Al hacer clic, muestra un mensaje invitando a contactar
+- **Contacto directo:** Abre WhatsApp con el número **+57 323 8151791**
+- **Disponible en todas las páginas:** El widget aparece en todo el sitio
+- **Responsive:** Se adapta a dispositivos móviles
+
+**Cómo funciona:**
+1. Haz clic en el botón 💬 en la esquina inferior derecha
+2. Verás el mensaje "¿Necesitas ayuda? Contáctanos por WhatsApp"
+3. Haz clic en "Abrir WhatsApp" para enviar un mensaje directo
+
+## �🔀 Cómo aplicar los cambios del Pull Request a tu repositorio
 
 Los cambios propuestos por Copilot viven en una rama separada y se integran a tu rama principal (`main`) a través de un **Pull Request (PR)** en GitHub. Hay dos formas de hacerlo:
 
@@ -243,13 +354,16 @@ src/
 ├── components/
 │   ├── CartItem/       # Ítem del carrito con controles de cantidad
 │   ├── DropZone/       # Botón flotante 📦 para drag & drop
+│   ├── FloatingGiftBubble/ # Widget de lista de regalos
+│   ├── FloatingWhatsApp/   # Widget flotante para contacto por WhatsApp 💬
 │   ├── Footer/         # Footer con newsletter y enlaces
 │   ├── Header/         # Header sticky con nav y carrito
 │   ├── Newsletter/     # Formulario de suscripción con validación
 │   ├── ProductCard/    # Tarjeta de producto con favoritos + drag
 │   ├── ProductModal/   # Modal de detalles y comentarios
 │   ├── Rating/         # Estrellas de valoración
-│   └── SearchBar/      # Barra de búsqueda con debounce
+│   ├── SearchBar/      # Barra de búsqueda con debounce
+│   └── SidebarMenu/    # Menú lateral hamburguesa (📱 mobile)
 ├── data/
 │   └── products.js     # 22 productos con categorías
 ├── hooks/
